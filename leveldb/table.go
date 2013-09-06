@@ -7,7 +7,6 @@
 package leveldb
 
 import (
-	"runtime"
 	"sort"
 	"sync/atomic"
 
@@ -170,6 +169,10 @@ type tFilesIter struct {
 	ro   *opt.ReadOptions
 	tt   tFiles
 	pos  int
+}
+
+func (*tFilesIter) Close() error {
+	return nil
 }
 
 func (i *tFilesIter) Empty() bool {
@@ -344,8 +347,9 @@ func (t *tOps) newIterator(f *tFile, ro *opt.ReadOptions) iterator.Iterator {
 	}
 	it := c.Value().(*table.Reader).NewIterator(ro)
 	p := it.(*iterator.IndexedIterator)
-	runtime.SetFinalizer(p, func(x *iterator.IndexedIterator) {
+	p.AddCloseCb(func() error {
 		c.Release()
+		return nil
 	})
 	return it
 }

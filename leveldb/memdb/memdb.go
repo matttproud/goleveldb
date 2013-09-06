@@ -318,4 +318,5 @@ func (i *Iterator) Value() []byte {
 	return i.node.value
 }
 
-func (i *Iterator) Error() error { return nil }
+func (*Iterator) Error() error { return nil }
+func (*Iterator) Close() error { return nil }

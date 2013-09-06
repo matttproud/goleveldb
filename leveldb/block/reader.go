@@ -200,6 +200,8 @@ type Iterator struct {
 	err error
 	ri  int           // restart index
 	rr  *restartRange // restart range
+
+	closeCbs []func() error
 }
 
 func (i *Iterator) getRestartOffset(idx int) (int, error) {
@@ -407,3 +409,16 @@ func (i *Iterator) Value() []byte {
 }
 
 func (i *Iterator) Error() error { return i.err }
+
+func (i *Iterator) Close() error {
+	for _, cb := range i.closeCbs {
+		if err := cb(); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (i *Iterator) AddCloseCb(cbs ...func() error) {
+	i.closeCbs = append(i.closeCbs, cbs...)
+}

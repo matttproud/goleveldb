@@ -7,7 +7,6 @@
 package leveldb
 
 import (
-	"runtime"
 	"sync/atomic"
 	"unsafe"
 
@@ -78,7 +77,7 @@ func (v *version) purge() {
 
 func (v *version) drop(nv *version) {
 	v.next = nv
-	runtime.SetFinalizer(v, (*version).purge)
+	v.purge()
 }
 
 func (v *version) get(key iKey, ro *opt.ReadOptions) (value []byte, cstate bool, err error) {

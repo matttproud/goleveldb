@@ -192,3 +192,12 @@ func (i *MergedIterator) largest() {
 		}
 	}
 }
+
+func (i *MergedIterator) Close() error {
+	for _, it := range i.iters {
+		if err := it.Close(); err != nil {
+			return err
+		}
+	}
+	return nil
+}

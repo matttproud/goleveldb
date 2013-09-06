@@ -21,6 +21,8 @@ type IndexedIterator struct {
 	index IteratorIndexer
 	data  Iterator
 	err   error
+
+	closeCbs []func() error
 }
 
 // NewIndexedIterator create new initialized indexed iterator.
@@ -137,4 +139,18 @@ func (i *IndexedIterator) Error() error {
 func (i *IndexedIterator) setData() bool {
 	i.data, i.err = i.index.Get()
 	return i.err == nil
+}
+
+func (i *IndexedIterator) AddCloseCb(cbs ...func() error) {
+	i.closeCbs = append(i.closeCbs, cbs...)
+}
+
+func (i *IndexedIterator) Close() error {
+	for _, cb := range i.closeCbs {
+		if err := cb(); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

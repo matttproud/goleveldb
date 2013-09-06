@@ -8,7 +8,6 @@
 package table
 
 import (
-	"runtime"
 	"strings"
 
 	"github.com/syndtr/goleveldb/leveldb/block"
@@ -230,9 +229,14 @@ func (i *indexIter) Get() (iterator.Iterator, error) {
 		return nil, err
 	}
 	if cache != nil {
-		runtime.SetFinalizer(x, func(x *block.Iterator) {
+		x.AddCloseCb(func() error {
 			cache.Release()
+			return nil
 		})
 	}
 	return x, nil
+}
+
+func (i *indexIter) Close() error {
+	return nil
 }

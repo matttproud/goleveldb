@@ -38,6 +38,8 @@ type IteratorSeeker interface {
 
 	// If an error has occurred, return it.  Else return nil.
 	Error() error
+
+	Close() error
 }
 
 type Iterator interface {
@@ -69,3 +71,4 @@ func (*EmptyIterator) Prev() bool           { return false }
 func (*EmptyIterator) Key() []byte          { return nil }
 func (*EmptyIterator) Value() []byte        { return nil }
 func (i *EmptyIterator) Error() error       { return i.Err }
+func (*EmptyIterator) Close() error         { return nil }

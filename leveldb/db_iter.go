@@ -34,7 +34,7 @@ func (d *DB) newRawIterator(ro *opt.ReadOptions) iterator.Iterator {
 	return iterator.NewMergedIterator(ii, s.cmp)
 }
 
-// dbIter represent an interator states over a database session.
+// dbIter represents an iterator states over a database session.
 type dbIter struct {
 	snap       *Snapshot
 	cmp        comparer.BasicComparer
@@ -47,6 +47,10 @@ type dbIter struct {
 	last     bool
 	skey     []byte
 	sval     []byte
+}
+
+func (i *dbIter) Close() error {
+	return i.it.Close()
 }
 
 func (i *dbIter) clear() {
